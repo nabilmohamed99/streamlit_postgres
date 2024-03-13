@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: your_database_name
+      POSTGRES_USER: your_username
+      POSTGRES_PASSWORD: your_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    command: ["postgres", "-c", "log_statement=all"]
+
+  streamlit:
+    build: ./test_login_app
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./test_login_app:/app
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://your_username:your_password@db/your_database_name
+
+volumes:
+  db-data:
